@@ -2,7 +2,7 @@
 A chess game implemented using Django and the minimax algorithm
 
 Run using 'python manage.py runserver' from root directory. A command line chess UI is also available in:
-web-chess-ai/ai_module/chess_game.py
+web_chess_ai_app/ai_module/chess_game.py
 
 Note: Remove Django_heroku import from settings.py if deploying on a non-Heroku server.
 
