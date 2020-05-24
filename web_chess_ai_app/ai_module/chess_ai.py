@@ -61,6 +61,8 @@ BISHOP_TABLE = numpy.array([
 #Returns the best move given a current state of the board. Board must be chess.Board object.
 def minimax(state): #Searches one level in the game tree
 	highest_possible_score = 10000 # worst possible score for min i.e. +Infinite.
+	if state.is_game_over():
+		return chess.Move(None, None)
 	for index, move in enumerate(state.legal_moves):
 		
 		state.push(move) #generate state (a child-node of current state)

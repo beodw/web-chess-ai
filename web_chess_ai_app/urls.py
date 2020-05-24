@@ -2,5 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.play, name='home'),
+    path('', views.home, name='home'),
+    path('play', views.play, name='return_ai_move')
 ]
