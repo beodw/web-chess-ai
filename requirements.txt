@@ -1,0 +1,13 @@
+django
+gunicorn
+django-heroku
+dj-database-url
+psycopg2-binary
+decouple
+Pillow
+<<<<<<< HEAD
+python-chess
+numpy
+=======
+python-chess
+>>>>>>> chess UI fix

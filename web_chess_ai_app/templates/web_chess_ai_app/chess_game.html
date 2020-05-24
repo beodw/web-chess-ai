@@ -1,0 +1,124 @@
+{% load static %}
+<!Doctype HTML>
+<html>
+	<head>
+		<!-- <title>
+			Beod's Chess AI
+		</title> -->
+		<!-- Jquery required for chess.js and chessboard.js -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!--chessboard.js : local copy with static directory prepended to image links -->
+        <script type="text/javascript" src="{% static '/js_modules/chessboard_ui.js' %}"></script>
+
+        <!-- Styling required for chessboard.js from CDN-->
+		<link rel="stylesheet"
+      	href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+      	integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+      	crossorigin="anonymous">
+
+      	<!-- chess.js local build -->
+      	<script type="text/javascript" src="{% static 'js_modules/chess.js/chess_logic.js' %}"></script>
+
+      	
+	</head>
+ 
+	<body>
+		<div id="myBoard" style="width: 400px"></div>
+		<label>Status:</label>
+			<div id="status"></div>
+		<label>FEN:</label>
+			<div id="fen"></div>
+
+
+		<!-- chess_game_logic.js -->
+      	<script type="text/javascript">
+      
+			var board = null
+			var game = new Chess()
+			var $status = $('#status')
+			var $fen = $('#fen')
+			var $pgn = $('#pgn')
+
+			function onDragStart (source, piece, position, orientation) {
+		    	// do not pick up pieces if the game is over
+		    	if (game.game_over()) return false
+
+		    	// only pick up pieces for the side to move
+		    	if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+		        	(game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+		      	return false
+		    	}
+		  	}
+
+		  	function onDrop (source, target) {
+		    	// see if the move is legal
+		    	var move = game.move({
+		      	from: source,
+		      	to: target,
+		      	promotion: 'q' // NOTE: always promote to a queen for example simplicity
+		    	})
+
+		    	// illegal move
+		    	if (move === null) return 'snapback'
+
+		    	updateStatus()
+		  	}
+
+		  	// update the board position after the piece snap
+		  	// for castling, en passant, pawn promotion
+		  	function onSnapEnd () {
+		   		board.position(game.fen())
+		  	}
+
+		  	function updateStatus () {
+		    	var status = ''
+
+		    	var moveColor = 'White'
+		    	if (game.turn() === 'b') {
+		      		moveColor = 'Black'
+		    	}
+
+		    	// checkmate?
+		    	if (game.in_checkmate()) {
+		      		status = 'Game over, ' + moveColor + ' is in checkmate.'
+		    	}
+
+		    	// draw?
+		    	else if (game.in_draw()) {
+		      		status = 'Game over, drawn position'
+		    	}
+
+		    	// game still on
+		    	else {
+		      		status = moveColor + ' to move'
+
+		      		// check?
+		      		if (game.in_check()) {
+		        		status += ', ' + moveColor + ' is in check'
+		      		}
+		    	}
+
+		    $status.html(status)
+		    $fen.html(game.fen())
+		   
+		  	}
+
+		  	var config = {
+		   	 	draggable: true,
+		    	position: 'start',
+		    	onDragStart: onDragStart,
+		    	onDrop: onDrop,
+		    	onSnapEnd: onSnapEnd
+		  	}
+
+
+		  	board = Chessboard('myBoard', config)
+
+		  	updateStatus()
+
+  			
+      	</script>
+	</body>
+
+</html>
